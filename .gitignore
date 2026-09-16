@@ -1,0 +1,20 @@
+# secrets / tokens - never commit
+auth/client_secret.json
+auth/token.json
+
+# runtime state
+state.json
+*.tmp
+.run.lock
+
+# logs
+logs/*.log
+
+# python
+venv/
+__pycache__/
+*.pyc
+
+# editor/OS
+.vscode/
+.DS_Store

@@ -1,0 +1,15 @@
+{
+  "drive_folder_id": "15oDphnM9cPC9gg_Ej2svVVgAw6yM5p4N",
+  "credentials_file": "auth/client_secret.json",
+  "token_file": "auth/token.json",
+  "state_file": "state.json",
+  "videos_per_run": 1,
+  "video_extensions": [".mp4", ".mov", ".m4v", ".avi", ".webm"],
+  "title_template": "{filename} #Shorts",
+  "description_template": "#Shorts #short",
+  "tags": ["shorts"],
+  "privacy_status": "public",
+  "category_id": "22",
+  "order": "oldest_first",
+  "delete_from_drive_after_upload": false
+}
