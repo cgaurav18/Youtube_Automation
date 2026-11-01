@@ -27,8 +27,11 @@ def load_config():
 def load_state(state_file):
     if os.path.exists(state_file):
         with open(state_file) as f:
-            return json.load(f)
-    return {"posted": []}
+            state = json.load(f)
+    else:
+        state = {}
+    state.setdefault("posted", [])
+    return state
 
 
 def save_state(state_file, state):
@@ -95,9 +98,8 @@ def run(config):
                     config["privacy_status"],
                 )
                 log.info("Uploaded: https://youtube.com/shorts/%s", video_id)
-
-            state["posted"].append(f["id"])
-            save_state(state_file, state)
+                state["posted"].append(f["id"])
+                save_state(state_file, state)
 
             if config.get("delete_from_drive_after_upload"):
                 drive.delete(f["id"])

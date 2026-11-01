@@ -81,8 +81,8 @@ even though each run starts from a fresh, ephemeral runner.
 Setup:
 
 1. Push this repo to GitHub. Keep it **private** — `config.json` and the repo
-   contents don't hold secrets, but treat it that way since the workflow
-   commits your posting history.
+   contents don't hold secrets, but the workflow commits your posting history
+   to it.
 2. Encode your local credential files to base64 (after running `setup_auth.py`
    once, per step 3 above, so `auth/token.json` exists):
    ```bash

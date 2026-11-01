@@ -37,8 +37,33 @@ jobs:
           GOOGLE_TOKEN_JSON_B64: ${{ secrets.GOOGLE_TOKEN_JSON_B64 }}
         run: |
           mkdir -p auth
-          echo "$GOOGLE_CLIENT_SECRET_JSON_B64" | base64 -d > auth/client_secret.json
-          echo "$GOOGLE_TOKEN_JSON_B64" | base64 -d > auth/token.json
+
+          if [ -z "$GOOGLE_CLIENT_SECRET_JSON_B64" ]; then
+            echo "::error::Secret GOOGLE_CLIENT_SECRET_JSON_B64 is not set."
+            exit 1
+          fi
+          if [ -z "$GOOGLE_TOKEN_JSON_B64" ]; then
+            echo "::error::Secret GOOGLE_TOKEN_JSON_B64 is not set."
+            exit 1
+          fi
+
+          if ! echo "$GOOGLE_CLIENT_SECRET_JSON_B64" | base64 -d > auth/client_secret.json; then
+            echo "::error::GOOGLE_CLIENT_SECRET_JSON_B64 is not valid base64. Regenerate it with: base64 -w0 auth/client_secret.json"
+            exit 1
+          fi
+          if ! echo "$GOOGLE_TOKEN_JSON_B64" | base64 -d > auth/token.json; then
+            echo "::error::GOOGLE_TOKEN_JSON_B64 is not valid base64. Regenerate it with: base64 -w0 auth/token.json"
+            exit 1
+          fi
+
+          if ! python3 -c "import json; json.load(open('auth/client_secret.json'))" 2>/dev/null; then
+            echo "::error::auth/client_secret.json did not decode to valid JSON — check the secret was set to the base64 OUTPUT, not the raw file content."
+            exit 1
+          fi
+          if ! python3 -c "import json; json.load(open('auth/token.json'))" 2>/dev/null; then
+            echo "::error::auth/token.json did not decode to valid JSON — check the secret was set to the base64 OUTPUT, not the raw file content."
+            exit 1
+          fi
 
       - name: Run uploader
         run: python3 main.py
@@ -46,6 +71,10 @@ jobs:
       - name: Commit updated state
         if: always()
         run: |
+          if [ ! -f state.json ]; then
+            echo "No state.json to commit (uploader did not run or produced no file)."
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -f state.json
